@@ -5,6 +5,7 @@
  */
 package com.pwsz;
 
+import com.pwsz.servise.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -17,11 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.*;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     
+@Autowired
+    private LoginService logServise;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        //auth.userDetailsService(logServise).passwordEncoder(new Md5PasswordEncoder());
-      auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
+        auth.userDetailsService(logServise).passwordEncoder(new Md5PasswordEncoder());
     }
 
     @Override
@@ -30,8 +32,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/user").hasRole("USER")
-                //.antMatchers("/user").access("hasRole('USER')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
